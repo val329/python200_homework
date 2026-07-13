@@ -1,6 +1,10 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import statistics as stats
+from scipy import stats
+import seaborn as sns
+
 
 '''
 # ---------------- Pandas ---------------- #
@@ -151,26 +155,202 @@ axes[1].set_ylabel("scores")
 plt.tight_layout()  # Adjust layout for better spacing
 plt.show()
 
-'''
-
-
-
 
 # ---------------- Descriptive Statistics ---------------- #
 
+# 1
+# Given the list below, use NumPy to compute and print the mean, median, variance, and standard deviation. 
+data = [12, 15, 14, 10, 18, 22, 13, 16, 14, 15]
+print("mean: ", np.mean(data), "\nmedian ", np.median(data), "\nstd: ", np.std(data))
 
+# 2
+# Generate 500 random values from a normal distribution with mean 65 and standard deviation 10 
+# (use np.random.normal(65, 10, 500)). Plot a histogram with 20 bins. 
+# Add a title "Distribution of Scores" and label both axes.
+data = np.random.normal(loc=65, scale=10, size=500)
+plt.hist(data, bins=20, color='purple', alpha=0.7)
+plt.title("Distribution of Scores")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+
+# 3 
+# Create a boxplot comparing the two groups below. Label each box ("Group A" and "Group B") and add a title "Score Comparison".
+group_a = [55, 60, 63, 70, 68, 62, 58, 65]
+group_b = [75, 80, 78, 90, 85, 79, 82, 88]
+plt.boxplot([group_a, group_b], labels=["Group A", "Group B"])
+plt.title("Score comparison")
+plt.show()
+
+# 4
+# Create side-by-side boxplots comparing the two distributions. Label each boxplot appropriately 
+# ("Normal" and "Exponential") and add a title "Distribution Comparison".
+# Then, add a comment in your code briefly noting which distribution is more skewed, and which 
+# descriptive statistic (mean or median) would provide a more appropriate measure of central tendency for each distribution.
+
+normal_data = np.random.normal(50, 5, 200)
+skewed_data = np.random.exponential(10, 200)
+
+plt.boxplot([normal_data, skewed_data], labels=["Normal", "Skewed"])
+plt.title("Distribution comparison")
+plt.ylabel("Value")
+plt.show()
+
+# Exponential distribution is more skewed since ot has one of the whiskers longer. Median is an appropriate measure
+# For normal distribution mean is an appropriate measure since it doesn't have many outliers
+
+# 5
+# Print the mean, median, and mode of the following:
+# Why are the median and mean so different for data2? Add your answer as a comment in the code.
+
+data1 = [10, 12, 12, 16, 18]
+data2 = [10, 12, 12, 16, 150]
+
+print("Data1 : ", np.mean(data1), np.median(data1), stats.mode(data1))
+print("Data2 : ", np.mean(data2), np.median(data2), stats.mode(data2))
+
+# Data 2 has an outlier that skews the mean
 
 
 # ---------------- Hypothesis Testing ---------------- #
+# 1
+# Run an independent samples t-test on the two groups below. Print the t-statistic and p-value.
+group_a = [72, 68, 75, 70, 69, 73, 71, 74]
+group_b = [80, 85, 78, 83, 82, 86, 79, 84]
 
+# independent samples t-test
+t_stat, p_val = stats.ttest_ind(group_a, group_b)
+print("t-statistic:", t_stat)
+print("p-value:", p_val)
 
+# 2
+# Using the p-value from Q1, write an if/else statement that prints whether the result is statistically 
+# significant at alpha = 0.05.
+if p_val < 0.05:
+    print("The difference is statistically significant.")
+else:
+    print("No statistically significant difference detected.")
+
+# 3
+# Run a paired t-test on the before/after scores below (the same students measured twice). Print the t-statistic and p-value.
+
+before = [60, 65, 70, 58, 62, 67, 63, 66]
+after  = [68, 70, 76, 65, 69, 72, 70, 71]
+
+t_stat, p_val = stats.ttest_rel(before, after)
+print(f"t-statistic: {t_stat:.3f}")
+print(f"p-value: {p_val:.6f}")
+
+# 4
+# Run a one-sample t-test to check whether the mean of scores is significantly different from a national 
+# benchmark of 70. Print the t-statistic and p-value.
+scores = [72, 68, 75, 70, 69, 74, 71, 73]
+
+t_stat, p_val = stats.ttest_1samp(scores, 70)
+print(f"t-statistic: {t_stat:.3f}")
+print(f"p-value: {p_val:.6f}")
+
+# 5
+# Re-run the test from Q1 as a one-tailed test to check whether group_a scores are less than group_b scores. 
+# Print the resulting p-value. Use the alternative parameter.
+t_stat, p_val = stats.ttest_ind(group_a, group_b, alternative="less")
+print(f"t-statistic: {t_stat:.3f}")
+print(f"p-value: {p_val:.6f}")
+
+# 6
+# Write a plain-language conclusion for the result of Q1 
+# Your conclusion should mention the direction of the difference and whether it is likely due to chance.
+print("The two-tailed t-test conducted on Q1 dataset shows the p-value was less than the significance level, " \
+"which means the result is unlikely due to chance")
+
+'''
 
 # ---------------- Correlation ---------------- #
+# 1
+# Compute the Pearson correlation between x and y below using np.corrcoef(). Print the full correlation matrix, 
+# then print just the correlation coefficient (the value at position [0, 1]).
+# What do you expect the correlation to be, and why? Add your answer as a comment in the code.
 
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
 
+corr_matrix = np.corrcoef(x, y)
+print(corr_matrix, corr_matrix[0,1])
+# The correlation is very strong because all elements of dataset are multipliers of another dataset
+
+# 2
+# Use pearsonr() from scipy.stats to compute the correlation between x and y below. 
+# Print both the correlation coefficient and the p-value.
+from scipy.stats import pearsonr
+
+x = [1,  2,  3,  4,  5,  6,  7,  8,  9, 10]
+y = [10, 9,  7,  8,  6,  5,  3,  4,  2,  1]
+
+r, p = pearsonr(x, y)
+print("Correlation:", round(r, 2))
+print("p-value:", round(p, 4))
+
+# 3
+# Create the following DataFrame and use df.corr() to compute the correlation matrix. Print the result.
+people = {
+    "height": [160, 165, 170, 175, 180],
+    "weight": [55,  60,  65,  72,  80],
+    "age":    [25,  30,  22,  35,  28]
+}
+df = pd.DataFrame(people)
+print(df.corr())
+
+# 4
+# Create a scatter plot of x and y below, which have a negative relationship. 
+# Add a title "Negative Correlation" and label both axes.
+x = [10, 20, 30, 40, 50]
+y = [90, 75, 60, 45, 30]
+
+plt.scatter(x, y, color="green")
+plt.title("Negative correlation")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.show()
+
+# 5
+# Using the correlation matrix from Q3, create a heatmap with sns.heatmap(). Pass annot=True so the correlation 
+# values appear in each cell, and add a title "Correlation Heatmap".
+plt.figure(figsize=(10, 6))
+correlation_matrix = df.corr(numeric_only=True)
+sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f")
+plt.title("Correlation Heatmap")
+plt.show()
 
 
 # ---------------- Pipeline ---------------- #
 
+# 1
+# A data pipeline is a sequence of processing steps where each step takes in data, transforms it, and passes the result to the next. You don't need a special framework to build one -- chaining plain functions together is often enough.
+# Given the array below, which contains some missing values scattered throughout:
 
+arr = np.array([12.0, 15.0, np.nan, 14.0, 10.0, np.nan, 18.0, 14.0, 16.0, 22.0, np.nan, 13.0])
 
+# Implement the following three functions and then connect them in a data_pipeline() function.
+# create_series(arr) : takes a NumPy array and returns a pandas Series with the name "values".
+# clean_data(series) : takes the Series, removes any NaN values using .dropna(), and returns the cleaned Series.
+# summarize_data(series) -- takes the cleaned Series and returns a dictionary with four keys: "mean", "median", "std", and "mode". For mode, use series.mode()[0] to get a single value.
+# data_pipeline(arr) -- calls the three functions above in sequence and returns the summary dictionary.
+# # Call data_pipeline(arr) and print each key and its value from the result.
+# This is the last answer to put in warmup_01.py. Congrats!!!
+# The next question will be in prefect_warmup.py, but will implement the same functionality using Prefect instead of plain Python.
+# Pipeline Question 2
+# The answer to this question should go in prefect_warmup.py, not warmups_01.py.
+# Rebuild the pipeline from Q1 using Prefect. Copy your three functions from Pipeline Question 1 (create_series, clean_data, summarize_data) into this file and turn them into Prefect tasks using @task.
+# Turn data_pipeline() into a Prefect flow using @flow. Inside the flow, call the three tasks in order and return the summary dictionary.
+# Add this block at the bottom of the file so the flow runs when you execute the script directly:
+
+# if __name__ == "__main__":
+#     pipeline_flow()
+# Run your workflow from the terminal:
+
+# python prefect_warmup.py
+# The summary values should match what you got in Question 1.
+
+# Finally, add a comment block at the bottom of prefect_warmup.py answering these two questions:
+# This pipeline is simple -- just three small functions on a handful of numbers. Why might Prefect be more overhead than it is worth here?
+# Describe some realistic scenarios where a framework like Prefect could still be useful, even if the pipeline logic itself stays simple like in this case.
