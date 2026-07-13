@@ -3,10 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statistics as stats
 from scipy import stats
+from scipy.stats import pearsonr
 import seaborn as sns
 
 
-'''
+
 # ---------------- Pandas ---------------- #
 
 data = {
@@ -263,7 +264,7 @@ print(f"p-value: {p_val:.6f}")
 print("The two-tailed t-test conducted on Q1 dataset shows the p-value was less than the significance level, " \
 "which means the result is unlikely due to chance")
 
-'''
+
 
 # ---------------- Correlation ---------------- #
 # 1
@@ -279,7 +280,7 @@ print(corr_matrix, corr_matrix[0,1])
 # The correlation is very strong because all elements of dataset are multipliers of another dataset
 
 # 2
-# Use pearsonr() from scipy.stats to compute the correlation between x and y below. 
+# Use pearsonr() from scipy.to compute the correlation between x and y below. 
 # Print both the correlation coefficient and the p-value.
 from scipy.stats import pearsonr
 
@@ -322,6 +323,7 @@ plt.title("Correlation Heatmap")
 plt.show()
 
 
+
 # ---------------- Pipeline ---------------- #
 
 # 1
@@ -330,27 +332,33 @@ plt.show()
 
 arr = np.array([12.0, 15.0, np.nan, 14.0, 10.0, np.nan, 18.0, 14.0, 16.0, 22.0, np.nan, 13.0])
 
-# Implement the following three functions and then connect them in a data_pipeline() function.
-# create_series(arr) : takes a NumPy array and returns a pandas Series with the name "values".
-# clean_data(series) : takes the Series, removes any NaN values using .dropna(), and returns the cleaned Series.
-# summarize_data(series) -- takes the cleaned Series and returns a dictionary with four keys: "mean", "median", "std", and "mode". For mode, use series.mode()[0] to get a single value.
-# data_pipeline(arr) -- calls the three functions above in sequence and returns the summary dictionary.
-# # Call data_pipeline(arr) and print each key and its value from the result.
-# This is the last answer to put in warmup_01.py. Congrats!!!
-# The next question will be in prefect_warmup.py, but will implement the same functionality using Prefect instead of plain Python.
-# Pipeline Question 2
-# The answer to this question should go in prefect_warmup.py, not warmups_01.py.
-# Rebuild the pipeline from Q1 using Prefect. Copy your three functions from Pipeline Question 1 (create_series, clean_data, summarize_data) into this file and turn them into Prefect tasks using @task.
-# Turn data_pipeline() into a Prefect flow using @flow. Inside the flow, call the three tasks in order and return the summary dictionary.
-# Add this block at the bottom of the file so the flow runs when you execute the script directly:
 
-# if __name__ == "__main__":
-#     pipeline_flow()
-# Run your workflow from the terminal:
+def create_series(arr): 
+    # takes a NumPy array and returns a pandas Series with the name "values"
+    return pd.Series(arr, name='values')
 
-# python prefect_warmup.py
-# The summary values should match what you got in Question 1.
+def clean_data(series):
+    # takes the Series, removes any NaN values using .dropna(), and returns the cleaned Series.
+    return series.dropna()
 
-# Finally, add a comment block at the bottom of prefect_warmup.py answering these two questions:
-# This pipeline is simple -- just three small functions on a handful of numbers. Why might Prefect be more overhead than it is worth here?
-# Describe some realistic scenarios where a framework like Prefect could still be useful, even if the pipeline logic itself stays simple like in this case.
+def summarize_data(series):
+    # takes the cleaned Series and returns a dictionary with four keys: "mean", "median", "std", and "mode"
+    stats = {
+        'mean': np.mean(series),
+        'median': np.median(series),
+        'std': np.std(series),
+        'mode': series.mode()[0]
+    }
+    return stats
+
+def data_pipeline(arr):
+    #calls the cleaning and summarizing functions in sequence and returns the summary dictionary
+    values = create_series(arr)
+    values = clean_data(values)
+    values = summarize_data(values)
+    return values
+
+for key, value in data_pipeline(arr).items():
+    print(f"{key}: {value}")
+
+
