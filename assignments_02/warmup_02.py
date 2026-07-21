@@ -7,7 +7,7 @@ from sklearn.datasets import make_blobs
 import matplotlib.pyplot as plt
 
 
-'''
+
 # The scikit-learn API
 
 # 1. scikit-learn Question 1
@@ -69,7 +69,7 @@ plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.9, marker='X
 
 plt.title("Clusters found by K-Means")
 plt.savefig("./outputs/kmeans_clusters.png")
-'''
+
 
 
 # Linear Regression
