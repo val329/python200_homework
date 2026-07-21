@@ -14,7 +14,7 @@ from sklearn.metrics import (
     confusion_matrix,
     ConfusionMatrixDisplay
 )
-'''
+
 iris = load_iris(as_frame=True)
 X = iris.data
 y = iris.target
@@ -149,7 +149,7 @@ print("C=100", np.abs(log_reg_3.coef_).sum())
 
 
 
-'''
+
 # --------------------PCA-------------------- #
 # import gdown
 # from IPython.display import YouTubeVideo
